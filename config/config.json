@@ -19,7 +19,7 @@
     "username": "wmo1tw4rhh6eq8a1",
     "password": "ho2cymjp4kdgivoc",
     "database": "jzsacswiil6zlirx",
-    "host": "127.0.0.1",
+    "host": "zf4nk2bcqjvif4in.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
     "port": 3306,
     "dialect": "mysql"
   }
