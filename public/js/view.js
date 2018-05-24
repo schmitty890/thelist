@@ -132,5 +132,6 @@ $(document).ready(function() {
 
     $.post("/api/todos", todo, getTodos);
     $newItemInput.val("");
+    $newNameInput.val("");
   }
 });
