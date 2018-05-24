@@ -4,6 +4,7 @@
     "password": null,
     "database": "the_list",
     "host": "127.0.0.1",
+    "port": 3306,
     "dialect": "mysql"
   },
   "test": {
@@ -11,13 +12,15 @@
     "password": null,
     "database": "database_test",
     "host": "127.0.0.1",
+    "port": 3306,
     "dialect": "mysql"
   },
   "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
+    "username": "wmo1tw4rhh6eq8a1",
+    "password": "ho2cymjp4kdgivoc",
+    "database": "jzsacswiil6zlirx",
     "host": "127.0.0.1",
+    "port": 3306,
     "dialect": "mysql"
   }
 }
