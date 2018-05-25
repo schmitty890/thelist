@@ -1,0 +1,36 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <ul class="list-group todo-list">
+        <li class="list-group-item new-item">
+          <form id="todo-form">
+            <div class="container">
+              <div class="row">
+                <div class="col-5">
+                  <input class="name form-control" placeholder="Name" type="text" />
+                </div>
+                <div class="col-5">
+                  <input class="new-item form-control" placeholder="Add a todo" type="text" />
+                </div>
+                <div class="col-2">
+                  <button type="submit" class="btn btn-success">Add Todo</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </li>
+        <span class="todo-container">
+          {{#each Todos}}
+          <li class='list-group-item todo-item' todo="Todo">
+            <span>{{text}}</span><span> | created by: {{name}}</span>
+            <span> | last updated: {{lastUpdated updatedAt}}</span>
+            <input type='text' class='edit' style='display: none;'>
+            <button id='${todo.id}' class='delete btn btn-danger'>x</button>
+            <button class='complete btn btn-primary'>✓</button>
+          </li>
+          {{/each}}
+        </span>
+      </ul>
+    </div>
+  </div>
+</div>

@@ -33,14 +33,14 @@
   /**
    * [initializeRows resets the todos displayed with new todos from the database]
    */
-  function initializeRows() {
-    $todoContainer.empty();
-    var rowsToAdd = [];
-    for (var i = 0; i < todos.length; i++) {
-      rowsToAdd.push(createNewRow(todos[i]));
-    }
-    $todoContainer.prepend(rowsToAdd);
-  }
+  // function initializeRows() {
+  //   $todoContainer.empty();
+  //   var rowsToAdd = [];
+  //   for (var i = 0; i < todos.length; i++) {
+  //     rowsToAdd.push(createNewRow(todos[i]));
+  //   }
+  //   $todoContainer.prepend(rowsToAdd);
+  // }
 
   /**
    * [getTodos grabs todos from the database and updates the view]
@@ -51,7 +51,8 @@
       url: "/api/todos"
     }).then(function(data) {
       todos = data;
-      initializeRows();
+      // initializeRows();
+      // location.reload();
     });
   }
 
@@ -86,6 +87,7 @@
   function toggleComplete(element, event) {
     event.stopPropagation();
     var todo = element.parent().data("todo");
+    console.log(todo);
     todo.complete = !todo.complete;
     updateTodo(todo);
   }
@@ -179,6 +181,7 @@
       }
     });
 
+    location.reload();
     // reset values and focus first input
     $newItemInput.val("");
     $newNameInput.val("").focus();

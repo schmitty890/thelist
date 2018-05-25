@@ -14,7 +14,12 @@ module.exports = function(app) {
     //find all entries for a table when used with no options
     db.Todo.findAll({}).then(function(result) {
       //we have access to the todos as an argument inside of the cb
-      res.json(result);
+      // console.log(result);
+      res.render("index", {
+        Todos: result
+      });
+      // res.render("index");
+      // res.json(result);
     });
   });
 
