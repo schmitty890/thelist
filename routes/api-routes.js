@@ -14,12 +14,7 @@ module.exports = function(app) {
     //find all entries for a table when used with no options
     db.Todo.findAll({}).then(function(result) {
       //we have access to the todos as an argument inside of the cb
-      // console.log(result);
-      res.render("index", {
-        Todos: result
-      });
-      // res.render("index");
-      // res.json(result);
+      res.json(result);
     });
   });
 
@@ -56,7 +51,7 @@ module.exports = function(app) {
     // Update takes in two arguments, an object describing the properties we want to update,
     // and another "where" object describing the todos we want to update
     db.Todo.update({
-      text: req.body.text,
+      // text: req.body.text,
       complete: req.body.complete
     }, {
       where: {

@@ -86,8 +86,17 @@
    */
   function toggleComplete(element, event) {
     event.stopPropagation();
-    var todo = element.parent().attr("complete");
-    console.log(todo);
+    var todo = {
+      complete: element.parent().attr("data-complete"),
+      id: element.parent().attr("data-id")
+    }
+    
+    if(todo.complete === 'true') {
+      todo.complete = true;
+    } else if(todo.complete === 'false') {
+      todo.complete = false;
+    }
+    console.log(todo.complete);
     todo.complete = !todo.complete;
     updateTodo(todo);
   }
