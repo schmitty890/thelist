@@ -86,7 +86,7 @@
    */
   function toggleComplete(element, event) {
     event.stopPropagation();
-    var todo = element.parent().data("todo");
+    var todo = element.parent().attr("complete");
     console.log(todo);
     todo.complete = !todo.complete;
     updateTodo(todo);

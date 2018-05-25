@@ -21,11 +21,11 @@
         </li>
         <span class="todo-container">
           {{#each Todos}}
-          <li class='list-group-item todo-item' todo="Todo">
+          <li class='list-group-item todo-item' data-complete={{complete}} data-id={{id}} data-text={{text}} data-name={{name}}>
             <span>{{text}}</span><span> | created by: {{name}}</span>
             <span> | last updated: {{lastUpdated updatedAt}}</span>
             <input type='text' class='edit' style='display: none;'>
-            <button id='${todo.id}' class='delete btn btn-danger'>x</button>
+            <button id={{id}} class='delete btn btn-danger'>x</button>
             <button class='complete btn btn-primary'>✓</button>
           </li>
           {{/each}}

@@ -7,6 +7,7 @@
 var express = require("express");
 var bodyParser = require("body-parser");
 var exphbs = require("express-handlebars");
+var moment = require("moment");
 // Sets up the Express App
 // =============================================================
 var app = express();
@@ -25,7 +26,15 @@ app.use(bodyParser.json());
 app.use(express.static("public"));
 
 // set up app to use handlebars
-app.engine("handlebars", exphbs({ defaultLayout: "main" }));
+// TODO: move helpers into a handlebars helper folder of some sort
+app.engine('handlebars', exphbs({
+  defaultLayout: "main",
+  helpers: {
+    lastUpdated: function (time) {
+      return moment(time).fromNow();
+    }
+  }
+}));
 app.set("view engine", "handlebars");
 
 // Routes
