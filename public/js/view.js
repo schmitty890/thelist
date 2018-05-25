@@ -130,7 +130,13 @@ $(document).ready(function() {
       name: $newNameInput.val().trim()
     };
 
-    $.post("/api/todos", todo, getTodos);
+    $.post("/api/todos", todo, getTodos)
+    .then(function(err) {
+      if(err.errors) {
+        console.log(err);
+        alert(err.errors[0].message);  
+      }
+    });
     $newItemInput.val("");
     $newNameInput.val("");
   }

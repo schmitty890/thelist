@@ -27,6 +27,9 @@ module.exports = function(app) {
     }).then(function(result) {
       // `result` here would be the newly created todo
       res.json(result);
+    }).catch(function(err) {
+      //if there is an error, send it to the client js
+      res.json(err);
     });
   });
 
