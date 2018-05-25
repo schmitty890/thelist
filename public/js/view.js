@@ -1,4 +1,4 @@
-$(document).ready(function() {
+(function($){
   // Getting a reference to the input field where user adds a new todo
   var $newItemInput = $("input.new-item");
   var $newNameInput = $("input.name");
@@ -30,7 +30,9 @@ $(document).ready(function() {
   // Getting todos from database when page loads
   getTodos();
 
-  // This function resets the todos displayed with new todos from the database
+  /**
+   * [initializeRows resets the todos displayed with new todos from the database]
+   */
   function initializeRows() {
     $todoContainer.empty();
     var rowsToAdd = [];
@@ -40,7 +42,9 @@ $(document).ready(function() {
     $todoContainer.prepend(rowsToAdd);
   }
 
-  // This function grabs todos from the database and updates the view
+  /**
+   * [getTodos grabs todos from the database and updates the view]
+   */
   function getTodos() {
     $.ajax({
       method: "GET",
@@ -51,10 +55,12 @@ $(document).ready(function() {
     });
   }
 
-  // This function deletes a todo when the user clicks the delete button
+  /**
+   * [deleteTodo deletes a todo when the user clicks the delete button]
+   */
   function deleteTodo(element, event) {
     event.stopPropagation();
-    var id = element.data("id");
+    var id = element.attr("id");
     $.ajax({
       method: "DELETE",
       url: "/api/todos/" + id
@@ -63,7 +69,9 @@ $(document).ready(function() {
     });
   }
 
-  // This function handles showing the input box for a user to edit a todo
+  /**
+   * [editTodo handles showing the input box for a user to edit a todo]
+   */
   function editTodo(element) {
     var currentTodo = element.data("todo");
     element.children().hide();
@@ -72,7 +80,9 @@ $(document).ready(function() {
     element.children("input.edit").focus();
   }
 
-  // Toggles complete status
+  /**
+   * [toggleComplete Toggles complete status]
+   */
   function toggleComplete(element, event) {
     event.stopPropagation();
     var todo = element.parent().data("todo");
@@ -80,8 +90,10 @@ $(document).ready(function() {
     updateTodo(todo);
   }
 
-  // This function starts updating a todo in the database if a user hits the "Enter Key"
-  // While in edit mode
+  /**
+   * [finishEdit starts updating a todo in the database if a user hits the "Enter Key"
+   *  While in edit mode]
+   */
   function finishEdit(element) {
     var updatedTodo = element.data("todo");
     if (event.which === 13) {
@@ -91,7 +103,9 @@ $(document).ready(function() {
     }
   }
 
-  // This function updates a todo in our database
+  /**
+   * [updateTodo updates a todo in our database]
+   */
   function updateTodo(todo) {
     // console.log(todo);
     $.ajax({
@@ -103,8 +117,10 @@ $(document).ready(function() {
     });
   }
 
-  // This function is called whenever a todo item is in edit mode and loses focus
-  // This cancels any edits being made
+  /**
+   * [cancelEdit called whenever a todo item is in edit mode and loses focus
+   *  This cancels any edits being made]
+   */
   function cancelEdit(element) {
     var currentTodo = element.data("todo");
     if (currentTodo) {
@@ -115,22 +131,23 @@ $(document).ready(function() {
     }
   }
 
-  // This function constructs a todo-item row
+  /**
+   * [createNewRow constructs a todo-item row]
+   */
   function createNewRow(todo) {
     var $newInputRow = $(
       [
         `<li class='list-group-item todo-item'>
-          <span>todo.text</span><span> | created by: ${todo.name}</span>
+          <span>${todo.text}</span><span> | created by: ${todo.name}</span>
           <span> | last updated: ${moment(todo.updatedAt).fromNow()}</span>
           <input type='text' class='edit' style='display: none;'>
-          <button class='delete btn btn-danger'>x</button>
+          <button id='${todo.id}' class='delete btn btn-danger'>x</button>
           <button class='complete btn btn-primary'>✓</button>
         </li>`
       ].join("")
     );
 
-    $newInputRow.find("button.delete").data("id", todo.id);
-    $newInputRow.find("input.edit").css("display", "none");
+    // $newInputRow.find("button.delete").data("id", todo.id);
     $newInputRow.data("todo", todo);
     if (todo.complete) {
       $newInputRow.find("span").css("text-decoration", "line-through");
@@ -138,7 +155,10 @@ $(document).ready(function() {
     return $newInputRow;
   }
 
-  // This function inserts a new todo into our database and then updates the view
+  /**
+   * [insertTodo inserts a new todo in the database and then updates the view]
+   * @param  {[type]} event [description]
+   */
   function insertTodo(event) {
     event.preventDefault();
     var todo = {
@@ -153,23 +173,32 @@ $(document).ready(function() {
       data: todo
     }).then(function(err) {
       if(err.errors) {
-        // console.log(err);
         errorHandling(err);
-        alert(err.errors[0].message);  
       } else {
         getTodos();
       }
     });
 
-    // reset values
+    // reset values and focus first input
     $newItemInput.val("");
-    $newNameInput.val("");
+    $newNameInput.val("").focus();
   }
 
+  /**
+   * [errorHandling handle errors in a switch case. future validation will add more cases the more validation that is put in]
+   */
   function errorHandling(err) {
-    console.log('error handling');
-    console.log(err);
+    var errorMessage = err.errors["0"].message;
+
+    switch(errorMessage) {
+      case 'Validation len on text failed':
+        //display modal or div on the page showing error, for now we alert
+        alert(`Enter in an item from 1 to 140 characters in length.`);
+        break;
+      default:
+        console.log(`error not tracked yet: ${errorMessage}`);
+    }
   }
-});
+})(jQuery);
 
 
