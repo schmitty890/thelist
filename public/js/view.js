@@ -5,12 +5,24 @@ $(document).ready(function() {
   // Our new todos will go inside the todoContainer
   var $todoContainer = $(".todo-container");
   // Adding event listeners for deleting, editing, and adding todos
-  $(document).on("click", "button.delete", deleteTodo);
-  $(document).on("click", "button.complete", toggleComplete);
-  $(document).on("click", ".todo-item", editTodo);
-  $(document).on("keyup", ".todo-item", finishEdit);
-  $(document).on("blur", ".todo-item", cancelEdit);
-  $(document).on("submit", "#todo-form", insertTodo);
+  $(document).on("click", "button.delete", function(event) {
+    deleteTodo($(this), event);
+  });
+  $(document).on("click", "button.complete", function(event) {
+    toggleComplete($(this), event);
+  });
+  $(document).on("click", ".todo-item", function() {
+    editTodo($(this));
+  });
+  $(document).on("keyup", ".todo-item", function() {
+    finishEdit($(this));
+  });
+  $(document).on("blur", ".todo-item", function() {
+    cancelEdit($(this));
+  });
+  $(document).on("submit", "#todo-form", function(event) {
+    insertTodo(event);
+  });
 
   // Our initial todos array
   var todos = [];
@@ -30,68 +42,76 @@ $(document).ready(function() {
 
   // This function grabs todos from the database and updates the view
   function getTodos() {
-    $.get("/api/todos", function(data) {
+    $.ajax({
+      method: "GET",
+      url: "/api/todos"
+    }).then(function(data) {
       todos = data;
       initializeRows();
     });
   }
 
   // This function deletes a todo when the user clicks the delete button
-  function deleteTodo(event) {
+  function deleteTodo(element, event) {
     event.stopPropagation();
-    var id = $(this).data("id");
+    var id = element.data("id");
     $.ajax({
       method: "DELETE",
       url: "/api/todos/" + id
-    }).then(getTodos);
+    }).then(function() {
+      getTodos();
+    });
   }
 
   // This function handles showing the input box for a user to edit a todo
-  function editTodo() {
-    var currentTodo = $(this).data("todo");
-    $(this).children().hide();
-    $(this).children("input.edit").val(currentTodo.text);
-    $(this).children("input.edit").show();
-    $(this).children("input.edit").focus();
+  function editTodo(element) {
+    var currentTodo = element.data("todo");
+    element.children().hide();
+    element.children("input.edit").val(currentTodo.text);
+    element.children("input.edit").show();
+    element.children("input.edit").focus();
   }
 
   // Toggles complete status
-  function toggleComplete(event) {
+  function toggleComplete(element, event) {
     event.stopPropagation();
-    var todo = $(this).parent().data("todo");
+    var todo = element.parent().data("todo");
     todo.complete = !todo.complete;
     updateTodo(todo);
   }
 
   // This function starts updating a todo in the database if a user hits the "Enter Key"
   // While in edit mode
-  function finishEdit(event) {
-    var updatedTodo = $(this).data("todo");
+  function finishEdit(element) {
+    var updatedTodo = element.data("todo");
     if (event.which === 13) {
-      updatedTodo.text = $(this).children("input").val().trim();
-      $(this).blur();
+      updatedTodo.text = element.children("input").val().trim();
+      element.blur();
       updateTodo(updatedTodo);
     }
   }
 
   // This function updates a todo in our database
   function updateTodo(todo) {
+    // console.log(todo);
     $.ajax({
       method: "PUT",
       url: "/api/todos",
       data: todo
-    }).then(getTodos);
+    }).then(function() {
+      getTodos();
+    });
   }
 
   // This function is called whenever a todo item is in edit mode and loses focus
   // This cancels any edits being made
-  function cancelEdit() {
-    var currentTodo = $(this).data("todo");
+  function cancelEdit(element) {
+    var currentTodo = element.data("todo");
     if (currentTodo) {
-      $(this).children().hide();
-      $(this).children("input.edit").val(currentTodo.text);
-      $(this).children("span").show();
-      $(this).children("button").show();
+      element.children().hide();
+      element.children("input.edit").val(currentTodo.text);
+      element.children("span").show();
+      element.children("button").show();
     }
   }
 
@@ -99,16 +119,13 @@ $(document).ready(function() {
   function createNewRow(todo) {
     var $newInputRow = $(
       [
-        "<li class='list-group-item todo-item'>",
-        "<span>",
-        todo.text,
-        "</span>",
-        "<span> | created by: " + todo.name + "</span>",
-        "<span> | last updated: " + moment(todo.updatedAt).fromNow() + "</span>",
-        "<input type='text' class='edit' style='display: none;'>",
-        "<button class='delete btn btn-danger'>x</button>",
-        "<button class='complete btn btn-primary'>✓</button>",
-        "</li>"
+        `<li class='list-group-item todo-item'>
+          <span>todo.text</span><span> | created by: ${todo.name}</span>
+          <span> | last updated: ${moment(todo.updatedAt).fromNow()}</span>
+          <input type='text' class='edit' style='display: none;'>
+          <button class='delete btn btn-danger'>x</button>
+          <button class='complete btn btn-primary'>✓</button>
+        </li>`
       ].join("")
     );
 
@@ -130,14 +147,29 @@ $(document).ready(function() {
       name: $newNameInput.val().trim()
     };
 
-    $.post("/api/todos", todo, getTodos)
-    .then(function(err) {
+    $.ajax({
+      type: "POST",
+      url: "/api/todos",
+      data: todo
+    }).then(function(err) {
       if(err.errors) {
-        console.log(err);
+        // console.log(err);
+        errorHandling(err);
         alert(err.errors[0].message);  
+      } else {
+        getTodos();
       }
     });
+
+    // reset values
     $newItemInput.val("");
     $newNameInput.val("");
   }
+
+  function errorHandling(err) {
+    console.log('error handling');
+    console.log(err);
+  }
 });
+
+
