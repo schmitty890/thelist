@@ -51,7 +51,7 @@ module.exports = function(app) {
     // Update takes in two arguments, an object describing the properties we want to update,
     // and another "where" object describing the todos we want to update
     db.Todo.update({
-      text: req.body.text,
+      // text: req.body.text,
       complete: req.body.complete
     }, {
       where: {

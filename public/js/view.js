@@ -33,14 +33,14 @@
   /**
    * [initializeRows resets the todos displayed with new todos from the database]
    */
-  function initializeRows() {
-    $todoContainer.empty();
-    var rowsToAdd = [];
-    for (var i = 0; i < todos.length; i++) {
-      rowsToAdd.push(createNewRow(todos[i]));
-    }
-    $todoContainer.prepend(rowsToAdd);
-  }
+  // function initializeRows() {
+  //   $todoContainer.empty();
+  //   var rowsToAdd = [];
+  //   for (var i = 0; i < todos.length; i++) {
+  //     rowsToAdd.push(createNewRow(todos[i]));
+  //   }
+  //   $todoContainer.prepend(rowsToAdd);
+  // }
 
   /**
    * [getTodos grabs todos from the database and updates the view]
@@ -51,7 +51,8 @@
       url: "/api/todos"
     }).then(function(data) {
       todos = data;
-      initializeRows();
+      // initializeRows();
+      // location.reload();
     });
   }
 
@@ -65,6 +66,7 @@
       method: "DELETE",
       url: "/api/todos/" + id
     }).then(function() {
+      element.parents('.todo-item').hide();
       getTodos();
     });
   }
@@ -85,7 +87,21 @@
    */
   function toggleComplete(element, event) {
     event.stopPropagation();
-    var todo = element.parent().data("todo");
+    var todo = {
+      complete: element.parent().attr("data-complete"),
+      id: element.parent().attr("data-id")
+    }
+    
+    if(todo.complete === 'true') {
+      todo.complete = true;
+      element.parent().find('span').css('text-decoration', 'none');
+      element.parent().attr("data-complete", "false");
+    } else if(todo.complete === 'false') {
+      todo.complete = false;
+      element.parent().find('span').css("text-decoration", "line-through");
+      element.parent().attr("data-complete", "true");
+    }
+    console.log(todo.complete);
     todo.complete = !todo.complete;
     updateTodo(todo);
   }
@@ -134,26 +150,26 @@
   /**
    * [createNewRow constructs a todo-item row]
    */
-  function createNewRow(todo) {
-    var $newInputRow = $(
-      [
-        `<li class='list-group-item todo-item'>
-          <span>${todo.text}</span><span> | created by: ${todo.name}</span>
-          <span> | last updated: ${moment(todo.updatedAt).fromNow()}</span>
-          <input type='text' class='edit' style='display: none;'>
-          <button id='${todo.id}' class='delete btn btn-danger'>x</button>
-          <button class='complete btn btn-primary'>✓</button>
-        </li>`
-      ].join("")
-    );
+  // function createNewRow(todo) {
+  //   var $newInputRow = $(
+  //     [
+  //       `<li class='list-group-item todo-item'>
+  //         <span>${todo.text}</span><span> | created by: ${todo.name}</span>
+  //         <span> | last updated: ${moment(todo.updatedAt).fromNow()}</span>
+  //         <input type='text' class='edit' style='display: none;'>
+  //         <button id='${todo.id}' class='delete btn btn-danger'>x</button>
+  //         <button class='complete btn btn-primary'>✓</button>
+  //       </li>`
+  //     ].join("")
+  //   );
 
-    // $newInputRow.find("button.delete").data("id", todo.id);
-    $newInputRow.data("todo", todo);
-    if (todo.complete) {
-      $newInputRow.find("span").css("text-decoration", "line-through");
-    }
-    return $newInputRow;
-  }
+  //   // $newInputRow.find("button.delete").data("id", todo.id);
+  //   $newInputRow.data("todo", todo);
+  //   if (todo.complete) {
+  //     $newInputRow.find("span").css("text-decoration", "line-through");
+  //   }
+  //   return $newInputRow;
+  // }
 
   /**
    * [insertTodo inserts a new todo in the database and then updates the view]
@@ -175,10 +191,21 @@
       if(err.errors) {
         errorHandling(err);
       } else {
+        //front end simulation of adding to the list. this is to visually add to the list without reloading the page.
+        $('.todo-container').append(`
+          <li class="list-group-item todo-item">
+            <span>${todo.text}</span><span> | created by: ${todo.name}</span>
+            <span> | last updated: a few seconds ago</span>
+            <input type="text" class="edit" style="display: none;">
+            <button class="delete btn btn-danger">x</button>
+            <button class="complete btn btn-primary">✓</button>
+          </li>
+        `);
         getTodos();
       }
     });
 
+    // location.reload(); don't reload the page like this. this will be helpful when react comes into play
     // reset values and focus first input
     $newItemInput.val("");
     $newNameInput.val("").focus();
@@ -199,6 +226,12 @@
         console.log(`error not tracked yet: ${errorMessage}`);
     }
   }
+
+  function refresh() {
+    //reload the page every 10 minutes
+    setTimeout(function(){ location.reload(); }, 600000);
+  }
+  refresh();
 })(jQuery);
 
 
