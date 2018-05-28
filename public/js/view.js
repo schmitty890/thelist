@@ -31,18 +31,6 @@
   getTodos();
 
   /**
-   * [initializeRows resets the todos displayed with new todos from the database]
-   */
-  // function initializeRows() {
-  //   $todoContainer.empty();
-  //   var rowsToAdd = [];
-  //   for (var i = 0; i < todos.length; i++) {
-  //     rowsToAdd.push(createNewRow(todos[i]));
-  //   }
-  //   $todoContainer.prepend(rowsToAdd);
-  // }
-
-  /**
    * [getTodos grabs todos from the database and updates the view]
    */
   function getTodos() {
@@ -51,7 +39,6 @@
       url: "/api/todos"
     }).then(function(data) {
       todos = data;
-      // initializeRows();
       // location.reload();
     });
   }
